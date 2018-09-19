@@ -1,33 +1,38 @@
 class WeatherList {
-  constructor(parentSelector) {
+  constructor (parentSelector) {
     this.parent = document.querySelector(parentSelector)
   }
 
   addCondition (parent, className, word) {
-    let _newLi = document.createElement("li")
+    let _newLi = document.createElement('li')
     _newLi.classList.add(className)
-    _newLi.textContent =  `The ${className} is ${word}`
+    _newLi.textContent = `The ${className} is ${word}`
     parent.appendChild(_newLi)
   }
-//new behaviors here
-
-//new behaviors here
 }
 
-let parent = document.querySelector(".weatherconditions")
+class WeatherApi {
+  constructor (json) {
+    // save json into the state
+    this.json = json
+  }
 
-// const addCondition = (parent, className, word) => {
-//   let _newLi = document.createElement("li")
-//   _newLi.classList.add(className)
-//   _newLi.textContent =  `The ${className} is ${word}`
-//   parent.appendChild(_newLi)
-// }
+  doIt (json) {
+    const weatherList = new WeatherList('.weatherconditions')
+    weatherList.addCondition(parent, 'temp', json.main.temp)
+    weatherList.addCondition(parent, 'high', json.main.temp_max)
+    weatherList.addCondition(parent, 'low', json.main.temp_min)
+    weatherList.addCondition(parent, 'humidity', json.main.humidity)
+  }
+}
+
+let parent = document.querySelector('.weatherconditions')
 
 const main = () => {
-  let button = document.querySelector(".search-button")
-  let searchInput = document.querySelector(".search")
+  let button = document.querySelector('.search-button')
+  let searchInput = document.querySelector('.search')
 
-  button.addEventListener("click", event => {
+  button.addEventListener('click', event => {
     let searchInputValue = searchInput.value
 
     // 5 get the value from the input field and request that data be 'fetched' by the API
@@ -38,13 +43,10 @@ const main = () => {
         return response.json()
       })
       .then(json => {
-        const weatherList = new WeatherList('.weatherconditions')
-        weatherList.addCondition(parent, "temp", json.main.temp)
-        weatherList.addCondition(parent, "high", json.main.temp_max)
-        weatherList.addCondition(parent, "low", json.main.temp_min)
-        weatherList.addCondition(parent, "humidity", json.main.humidity)
+        const pass = new WeatherApi(json)
+        pass.doIt(json)
       })
   })
 }
 
-document.addEventListener("DOMContentLoaded", main)
+document.addEventListener('DOMContentLoaded', main)
